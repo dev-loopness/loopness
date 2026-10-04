@@ -47,58 +47,66 @@ export default async function DashboardPage({ params }: { params: Promise<{ comp
 
   const seats = features.coachSeats === Infinity ? "unlimited" : features.coachSeats;
 
+  const planRows: { key: "free" | "pro" | "team"; text: string }[] = [
+    { key: "free", text: "1 coach, 30 videos a month, queue and timestamped comments" },
+    { key: "pro", text: "$39/mo. 3 coaches, up to 1,000 videos, rubric scores, live sessions" },
+    { key: "team", text: "$99/mo. Unlimited coaches, up to 3,000 videos, coach workload" },
+  ];
+
   return (
     <main>
-      <div className="row between" style={{ marginBottom: 16 }}>
+      <header className="page-head">
         <div>
           <h1>ReviewLoop</h1>
-          <div className="muted small">{business.name} · owner dashboard</div>
+          <p className="sub">{business.name}</p>
         </div>
-        <span className="badge">{features.label} plan</span>
-      </div>
+        <span className="pill accent">{features.label} plan</span>
+      </header>
 
-      <div className="stats" style={{ marginBottom: 16 }}>
-        <div className="stat">
-          <span className="muted small">Videos this month</span>
-          <b>
-            {month.length} <span className="muted small">/ {features.monthlySubmissions}</span>
-          </b>
+      <dl className="metrics">
+        <div className="metric">
+          <dt>Videos this month</dt>
+          <dd>
+            {fmt.format(month.length)} <small>of {fmt.format(features.monthlySubmissions)}</small>
+          </dd>
         </div>
-        <div className="stat">
-          <span className="muted small">Waiting for review</span>
-          <b>{queue.length}</b>
+        <div className="metric">
+          <dt>Waiting for review</dt>
+          <dd>{fmt.format(queue.length)}</dd>
         </div>
-        <div className="stat">
-          <span className="muted small">Average time to review</span>
-          <b>{hrs(avgHours)}</b>
+        <div className="metric">
+          <dt>Average time to review</dt>
+          <dd>{hrs(avgHours)}</dd>
         </div>
-        <div className="stat">
-          <span className="muted small">Coaches reviewing this month</span>
-          <b>
-            {coaches.size} <span className="muted small">/ {seats}</span>
-          </b>
+        <div className="metric">
+          <dt>Coaches reviewing</dt>
+          <dd>
+            {coaches.size} <small>of {seats}</small>
+          </dd>
         </div>
-        <div className="stat">
-          <span className="muted small">Members sending videos</span>
-          <b>
-            {submitters.size} <span className="muted small">of {members.length}</span>
-          </b>
+        <div className="metric">
+          <dt>Members sending videos</dt>
+          <dd>
+            {submitters.size} <small>of {members.length}</small>
+          </dd>
         </div>
-      </div>
+      </dl>
 
-      <div className="grid2">
-        <div>
-          <div className="panel">
-            <h2>Coach workload this month</h2>
+      <div className="split" style={{ gridTemplateColumns: "minmax(0, 6fr) minmax(0, 5fr)" }}>
+        <div className="stack" style={{ gap: 20 }}>
+          <section className="surface pad" aria-labelledby="workload">
+            <h2 id="workload" style={{ marginBottom: 10 }}>
+              Coach workload this month
+            </h2>
             {features.workload ? (
               workload.length ? (
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>Coach</th>
-                      <th>Reviewed</th>
-                      <th>Comments</th>
-                      <th>Avg time</th>
+                      <th scope="col">Coach</th>
+                      <th scope="col">Reviewed</th>
+                      <th scope="col">Comments</th>
+                      <th scope="col">Avg time</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -113,49 +121,57 @@ export default async function DashboardPage({ params }: { params: Promise<{ comp
                   </tbody>
                 </table>
               ) : (
-                <p className="muted small">No reviews yet this month.</p>
+                <p className="small muted">Once coaches start reviewing, you&apos;ll see who is carrying how much here.</p>
               )
             ) : (
-              <p className="muted small">See each coach&apos;s workload and review times on the Team plan.</p>
+              <p className="small muted">See each coach&apos;s reviews and turnaround on the Team plan.</p>
             )}
-          </div>
+          </section>
 
-          <div className="panel">
-            <h2>Your plan</h2>
-            <p>
-              You&apos;re on <strong>{features.label}</strong> ({features.price}).
-            </p>
-            <ul className="small">
-              <li>Free: 1 coach, 30 videos a month, queue and timestamped comments</li>
-              <li>Pro $39/mo: 3 coaches, up to 1,000 videos, rubric scores, live session mode</li>
-              <li>Team $99/mo: unlimited coaches, workload dashboard</li>
+          <section className="surface pad" aria-labelledby="plan">
+            <h2 id="plan">Plan</h2>
+            <ul className="plans">
+              {planRows.map((r) => (
+                <li key={r.key} aria-current={plan === r.key}>
+                  <strong>{PLANS[r.key].label}</strong>
+                  <span className="muted">{r.text}</span>
+                </li>
+              ))}
             </ul>
-            <p className="small muted">Yearly plans are a fixed 12-month term at 10 months&apos; price. If you hit a limit, new submissions pause; there are never surprise charges.</p>
-            <div className="row">
-              {plan !== "pro" && plan !== "team" && <UpgradeLink plan="pro" />}
+            <p className="xs muted">Yearly plans are a fixed 12-month term at 10 months&apos; price. At a limit, new videos pause. There are never extra charges.</p>
+            <div className="row" style={{ marginTop: 12 }}>
+              {plan === "free" && <UpgradeLink plan="pro" />}
               {plan !== "team" && <UpgradeLink plan="team" />}
+              {isDemoMode && <span className="xs faint">Demo: switch plans in the top bar.</span>}
             </div>
-            {isDemoMode && <p className="small muted" style={{ marginTop: 8 }}>Demo mode: switch plans with the bar at the top.</p>}
-          </div>
+          </section>
         </div>
 
-        <div className="panel">
-          <h2>Settings</h2>
+        <section className="surface pad" aria-labelledby="settings">
+          <h2 id="settings" style={{ marginBottom: 14 }}>
+            Settings
+          </h2>
           <SettingsForm businessId={business.id} settings={business.settings} rubricsEnabled={features.rubrics} />
-        </div>
+        </section>
       </div>
     </main>
   );
 }
 
-const hrs = (h: number | null) => (h === null ? "–" : h < 1 ? "under 1h" : `${h}h`);
+const fmt = new Intl.NumberFormat("en-US");
+const hrs = (h: number | null) => (h === null ? "None yet" : h < 1 ? "Under 1h" : `${h}h`);
 
 function UpgradeLink({ plan }: { plan: "pro" | "team" }) {
   const url = checkoutUrl(plan);
   const label = `Upgrade to ${PLANS[plan].label}`;
-  if (!url) return <button disabled title="Checkout link not set up yet">{label}</button>;
+  if (!url)
+    return (
+      <button disabled title="Checkout link not set up yet" className={plan === "pro" ? "btn-primary" : undefined}>
+        {label}
+      </button>
+    );
   return (
-    <a className={`btn${plan === "pro" ? " primary" : ""}`} href={url} target="_blank" rel="noreferrer">
+    <a className={`btn${plan === "pro" ? " btn-primary" : ""}`} href={url} target="_blank" rel="noreferrer">
       {label}
     </a>
   );

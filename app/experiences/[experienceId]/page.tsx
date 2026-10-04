@@ -9,8 +9,15 @@ import { getExperienceViewer } from "@/lib/whop";
 
 export const dynamic = "force-dynamic";
 
-export default async function ExperiencePage({ params }: { params: Promise<{ experienceId: string }> }) {
+export default async function ExperiencePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ experienceId: string }>;
+  searchParams: Promise<{ view?: string; s?: string }>;
+}) {
   const { experienceId } = await params;
+  const sp = await searchParams;
   const viewer = await getExperienceViewer(experienceId).catch((e) => {
     console.error(e);
     return null;
@@ -41,7 +48,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ exp
         : null;
     return (
       <main>
-        <Header title="Review queue" subtitle={`${business.name} · ${viewer.name} · ${features.label} plan`} />
+        <Header title="Reviews" subtitle={`${business.name}, ${features.label} plan`} />
         <CoachView
           experienceId={experienceId}
           queue={queue}
@@ -49,6 +56,8 @@ export default async function ExperiencePage({ params }: { params: Promise<{ exp
           comments={comments.filter((c) => visible.has(c.submissionId))}
           liveEnabled={features.liveMode}
           queueNotice={queueNotice}
+          initialView={sp.view === "live" || sp.view === "done" ? sp.view : "queue"}
+          initialId={sp.s ?? null}
           tools={{
             rubric: business.settings.rubric,
             snippets: business.settings.snippets,
@@ -69,7 +78,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ exp
 
   return (
     <main>
-      <Header title="Video feedback" subtitle={`${business.name} · ${viewer.name}`} />
+      <Header title="Video feedback" subtitle={business.name} />
       <MemberView
         experienceId={experienceId}
         mine={mine}
@@ -87,9 +96,11 @@ export default async function ExperiencePage({ params }: { params: Promise<{ exp
 
 function Header({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div style={{ marginBottom: 16 }}>
-      <h1>{title}</h1>
-      <div className="muted small">{subtitle}</div>
-    </div>
+    <header className="page-head">
+      <div>
+        <h1>{title}</h1>
+        <p className="sub">{subtitle}</p>
+      </div>
+    </header>
   );
 }

@@ -18,7 +18,7 @@ To connect it to Whop, see **CONNECT.md**.
 - Review queue, oldest first
 - Timestamped comments at the current playback time, or at a typed time like `1:05`
 - Saved comments (snippets) in one click
-- Rubric scores 1–5 (Pro and Team)
+- Rubric scores 1 to 5 (Pro and Team)
 - Mark reviewed / needs revision / save draft
 - Live session mode: step through videos flagged for the call; the next one opens when you finish (Pro and Team)
 

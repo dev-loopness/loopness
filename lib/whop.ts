@@ -20,13 +20,13 @@ export interface Viewer {
   experienceId: string | null;
 }
 
-export const DEMO_BUSINESS = { id: "biz_demo", name: "Demo Coaching Club" };
+export const DEMO_BUSINESS = { id: "biz_demo", name: "Northside Lifting Club" };
 export const DEMO_EXPERIENCE_ID = "exp_demo";
 export const DEMO_USERS: Record<string, { name: string; role: Role }> = {
-  user_demo_coach: { name: "Coach Sam", role: "coach" },
-  user_demo_coach2: { name: "Coach Priya", role: "coach" },
-  user_demo_alex: { name: "Alex (member)", role: "member" },
-  user_demo_jo: { name: "Jo (member)", role: "member" },
+  user_demo_coach: { name: "Marisol Ortega", role: "coach" },
+  user_demo_coach2: { name: "Dev Kapoor", role: "coach" },
+  user_demo_alex: { name: "Tobiah Wren", role: "member" },
+  user_demo_jo: { name: "Ines Achterberg", role: "member" },
 };
 
 const API_VERSION = "2026-09-29";

@@ -10,6 +10,8 @@ import { tiktokId, youtubeId } from "@/lib/reviews";
 export interface PlayerHandle {
   /** Current playback time in seconds, or null when this player can't tell. */
   getTime(): number | null;
+  /** Video length in seconds, or null when unknown. */
+  getDuration(): number | null;
   seek(t: number): void;
 }
 
@@ -52,16 +54,21 @@ export function VideoPlayer({
   const ytHost = useRef<HTMLDivElement>(null);
   const ttFrame = useRef<HTMLIFrameElement>(null);
   const ttTime = useRef<number | null>(null);
+  const ttDuration = useRef<number | null>(null);
 
   const ytVideo = kind === "youtube" ? youtubeId(url) : null;
   const ttVideo = kind === "tiktok" ? tiktokId(url) : null;
 
   useEffect(() => {
-    handle.current = { getTime: () => null, seek: () => {} };
+    handle.current = { getTime: () => null, getDuration: () => null, seek: () => {} };
 
     if (kind === "upload") {
       handle.current = {
         getTime: () => videoRef.current?.currentTime ?? null,
+        getDuration: () => {
+          const d = videoRef.current?.duration;
+          return d && Number.isFinite(d) ? d : null;
+        },
         seek: (t) => {
           if (!videoRef.current) return;
           videoRef.current.currentTime = t;
@@ -82,6 +89,7 @@ export function VideoPlayer({
       });
       handle.current = {
         getTime: () => (player?.getCurrentTime ? player.getCurrentTime() : null),
+        getDuration: () => (player?.getDuration ? player.getDuration() || null : null),
         seek: (t) => {
           player?.seekTo?.(t, true);
           player?.playVideo?.();
@@ -98,11 +106,15 @@ export function VideoPlayer({
       const onMessage = (e: MessageEvent) => {
         if (e.source !== ttFrame.current?.contentWindow) return;
         const d = typeof e.data === "string" ? safeJson(e.data) : e.data;
-        if (d?.type === "onCurrentTime" && typeof d.value?.currentTime === "number") ttTime.current = d.value.currentTime;
+        if (d?.type === "onCurrentTime" && typeof d.value?.currentTime === "number") {
+          ttTime.current = d.value.currentTime;
+          if (typeof d.value.duration === "number") ttDuration.current = d.value.duration;
+        }
       };
       window.addEventListener("message", onMessage);
       handle.current = {
         getTime: () => ttTime.current,
+        getDuration: () => ttDuration.current,
         seek: (t) => {
           ttFrame.current?.contentWindow?.postMessage({ type: "seekTo", value: t, "x-tiktok-player": true }, "*");
           ttFrame.current?.contentWindow?.postMessage({ type: "play", "x-tiktok-player": true }, "*");
@@ -116,7 +128,7 @@ export function VideoPlayer({
     const src = `${url}?e=${encodeURIComponent(experienceId)}`;
     return (
       <div className="player">
-        <video ref={videoRef} src={src} controls playsInline preload="metadata" />
+        <video ref={videoRef} src={src} controls playsInline preload="metadata" aria-label="Submitted video" />
       </div>
     );
   }
@@ -140,12 +152,14 @@ export function VideoPlayer({
     );
   }
   return (
-    <div className="notice">
-      This link can&apos;t be played inside ReviewLoop.{" "}
-      <a href={url} target="_blank" rel="noreferrer">
-        Open the video
-      </a>{" "}
-      in a new tab, then leave general comments here (type a time like 1:05 to point at a moment).
+    <div className="banner">
+      <p>
+        This link can&apos;t play inside ReviewLoop.{" "}
+        <a href={url} target="_blank" rel="noreferrer">
+          Open the video
+        </a>{" "}
+        in a new tab, then type a time like 1:05 next to each comment.
+      </p>
     </div>
   );
 }

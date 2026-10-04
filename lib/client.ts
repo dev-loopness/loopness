@@ -12,20 +12,8 @@ export async function api<T = unknown>(url: string, init: RequestInit & { json?:
   return data as T;
 }
 
-export function timeAgo(iso: string) {
-  const s = Math.max(1, Math.round((Date.now() - Date.parse(iso)) / 1000));
-  if (s < 60) return "just now";
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.round(m / 60);
-  if (h < 48) return `${h}h ago`;
-  return `${Math.round(h / 24)}d ago`;
-}
-
 export function hoursLabel(h: number) {
   if (h < 24) return `about ${h} hour${h === 1 ? "" : "s"}`;
   const d = Math.round(h / 24);
   return `about ${d} day${d === 1 ? "" : "s"}`;
 }
-
-export const STATUS_LABEL = { queued: "Waiting for review", reviewed: "Reviewed", needs_revision: "Needs revision" } as const;

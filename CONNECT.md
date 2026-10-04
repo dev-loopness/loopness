@@ -51,7 +51,7 @@ access, and read memberships.
 ## 4. Hosting (needed before real members can use it)
 
 The app has to run on a server that Whop can reach. Because it saves videos to disk, pick a host
-with a **persistent disk**, for example Railway or Render (roughly $5–10/month). On the host:
+with a **persistent disk**, for example Railway or Render (roughly $5-10/month). On the host:
 
 1. Create a service from this code (Claude Code can do this once GitHub is connected).
 2. Add a persistent disk/volume, for example mounted at `/data`, and set `DATA_DIR=/data`.
