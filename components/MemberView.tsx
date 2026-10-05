@@ -36,6 +36,7 @@ export function MemberView({
   blocker,
   mission,
   liveEnabled,
+  uploadsEnabled,
 }: {
   experienceId: string;
   mine: Submission[];
@@ -46,9 +47,10 @@ export function MemberView({
   blocker: string | null;
   mission: { daysLeft: number } | null;
   liveEnabled: boolean;
+  uploadsEnabled: boolean;
 }) {
   const router = useRouter();
-  const [mode, setMode] = useState<"upload" | "link">("upload");
+  const [mode, setMode] = useState<"upload" | "link">(uploadsEnabled ? "upload" : "link");
   const [file, setFile] = useState<File | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
   const [over, setOver] = useState(false);
@@ -184,7 +186,13 @@ export function MemberView({
           ) : (
             <>
               <div className="segmented" role="group" aria-label="How to send your video" style={{ marginBottom: 12 }}>
-                <button type="button" aria-pressed={mode === "upload"} onClick={() => setMode("upload")}>
+                <button
+                  type="button"
+                  aria-pressed={mode === "upload"}
+                  onClick={() => setMode("upload")}
+                  disabled={!uploadsEnabled}
+                  title={uploadsEnabled ? undefined : "File uploads are coming soon. Paste a link for now."}
+                >
                   Upload File
                 </button>
                 <button type="button" aria-pressed={mode === "link"} onClick={() => setMode("link")}>

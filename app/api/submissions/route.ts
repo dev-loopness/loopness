@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { experienceCtx, fail, handler } from "@/lib/api";
 import { MAX_UPLOAD_BYTES, MAX_VIDEO_SECONDS } from "@/lib/config";
 import { detectKind, submissionBlocker } from "@/lib/reviews";
-import { newId, read, UPLOAD_DIR, write, type Submission } from "@/lib/store";
+import { saveVideo, uploadTarget } from "@/lib/media";
+import { newId, read, write, type Submission } from "@/lib/store";
 
 const VIDEO_TYPES: Record<string, string> = {
   "video/mp4": "mp4",
@@ -32,6 +31,7 @@ export const POST = handler(async (req: Request) => {
   let kind: Submission["kind"];
   let url: string;
   let durationSec: number | null = Number(form.get("durationSec")) || null;
+  let storage: Submission["storage"];
 
   const file = form.get("file");
   if (file instanceof File && file.size > 0) {
@@ -39,9 +39,11 @@ export const POST = handler(async (req: Request) => {
     if (!ext) fail(400, "Please upload an MP4, MOV or WebM video.");
     if (file.size > MAX_UPLOAD_BYTES) fail(400, "That file is too big. Keep videos under 250 MB.");
     if (durationSec && durationSec > MAX_VIDEO_SECONDS + 1) fail(400, "Videos can be up to 3 minutes long.");
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+    const target = uploadTarget();
+    if (!target) fail(503, "Video uploads aren't switched on yet. Paste a YouTube or TikTok link for now.");
     const name = `${id}.${ext}`;
-    await fs.writeFile(path.join(UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
+    await saveVideo(target, name, Buffer.from(await file.arrayBuffer()), file.type);
+    storage = target;
     kind = "upload";
     url = `/api/media/${name}`;
   } else {
@@ -62,6 +64,7 @@ export const POST = handler(async (req: Request) => {
     kind,
     url,
     durationSec,
+    storage,
     forLiveSession,
     status: "queued",
     scores: {},

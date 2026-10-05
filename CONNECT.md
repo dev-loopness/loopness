@@ -35,7 +35,27 @@ How plans work: when a community owner opens the ReviewLoop dashboard, the app c
 hold an active Pro or Team membership in your business. If yes, their whole community gets that plan.
 If these blanks stay empty, every community is treated as Free.
 
-## 3. Settings to type into the Whop developer app
+## 3. Video storage: Cloudflare R2
+
+Uploaded videos are stored in Cloudflare R2, not on the server, because a cheap server disk fills up within the
+first months. R2 has no download fees and a free allowance of 10 GB; after that it's about $0.015 per GB per month.
+
+1. Create a free Cloudflare account at dash.cloudflare.com and open **R2 Object Storage** (it asks for a card, even on the free allowance).
+2. Click **Create bucket**, name it `reviewloop-videos`, and keep it private (the default).
+3. Go to **R2 → Manage API tokens → Create API token**. Choose **Object Read & Write**, limit it to the `reviewloop-videos` bucket, and create it.
+4. Copy these values from the page that appears (it only shows the secret once):
+
+| Blank | What to copy |
+|---|---|
+| `R2_ACCOUNT_ID` | Your account ID (also shown on the R2 overview page) |
+| `R2_ACCESS_KEY_ID` | Access Key ID. Secret. |
+| `R2_SECRET_ACCESS_KEY` | Secret Access Key. Secret. |
+| `R2_BUCKET` | `reviewloop-videos` (the name you chose) |
+
+Until these are filled in, demo mode saves videos on the computer running the app. Once Whop is connected, members
+can still paste YouTube or TikTok links without R2, but the "Upload File" option stays switched off.
+
+## 4. Settings to type into the Whop developer app
 
 In the developer dashboard, on the app's hosting / views settings:
 
@@ -55,7 +75,7 @@ with a **persistent disk**, for example Railway or Render (roughly $5-10/month).
 
 1. Create a service from this code (Claude Code can do this once GitHub is connected).
 2. Add a persistent disk/volume, for example mounted at `/data`, and set `DATA_DIR=/data`.
-3. Paste every value from sections 1 and 2 into the host's environment variables page.
+3. Paste every value from sections 1, 2 and 3 into the host's environment variables page.
 4. Copy the host's web address into `APP_URL` and into Whop's Base URL.
 
 Then install the app on a test business and open it from the sidebar: admins see the review queue,
@@ -70,5 +90,6 @@ members see the "Get feedback on a video" page.
 - [ ] `REVIEWLOOP_BUSINESS_API_KEY`
 - [ ] `WHOP_PRO_PLAN_ID` (+ yearly)
 - [ ] `WHOP_TEAM_PLAN_ID` (+ yearly)
+- [ ] `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`
 - [ ] `APP_URL` and `DATA_DIR` (when hosted)
 - [ ] Base URL, Experience path, Dashboard path typed into Whop

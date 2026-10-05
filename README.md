@@ -47,11 +47,13 @@ npm run dev        # http://localhost:3000 in demo mode
 npm run build && npm start
 ```
 
-Storage is a JSON file plus an uploads folder under `DATA_DIR` (default `./data`). That's fine for
-the first communities on one server with a persistent disk.
+Uploaded videos go to Cloudflare R2 (`lib/media.ts`); the browser streams them through a one-hour signed
+link. In demo mode, with the R2 values blank, they go to `DATA_DIR/uploads` instead. Records (submissions,
+comments, settings) are a JSON file under `DATA_DIR` (default `./data`), which is fine for the first
+communities on one server with a small persistent disk.
 
 ## Not built yet (version 2)
 
 Peer review, shareable portfolios, automated pre-checks, ROI report, image review, data export button,
-and moving storage to a hosted database plus video storage (for example Postgres and Cloudflare R2)
-once there are more than a handful of communities.
+and moving records to a hosted database (for example Postgres) once there are more than a handful of
+communities. Uploads currently pass through the server; direct browser-to-R2 uploads would lighten it later.
