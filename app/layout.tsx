@@ -5,7 +5,7 @@ import { DemoBar } from "@/components/DemoBar";
 import { isDemoMode } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "ReviewLoop",
+  title: "Loopness",
   description: "Video feedback for coaching communities on Whop",
 };
 

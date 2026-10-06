@@ -154,7 +154,7 @@ export function VideoPlayer({
   return (
     <div className="banner">
       <p>
-        This link can&apos;t play inside ReviewLoop.{" "}
+        This link can&apos;t play inside Loopness.{" "}
         <a href={url} target="_blank" rel="noreferrer">
           Open the video
         </a>{" "}

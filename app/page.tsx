@@ -8,7 +8,7 @@ export default function Home() {
   if (isPublicDemo) return <PublicDemoHome />;
   return (
     <main style={{ maxWidth: 640, paddingTop: 64 }}>
-      <h1 style={{ fontSize: 24 }}>ReviewLoop</h1>
+      <h1 style={{ fontSize: 24 }}>Loopness</h1>
       <p className="muted" style={{ marginTop: 8 }}>
         Members send a video. Coaches pin feedback to the exact second it matters.
       </p>
@@ -28,7 +28,7 @@ export default function Home() {
           </p>
         </>
       ) : (
-        <p style={{ marginTop: 24 }}>ReviewLoop runs inside Whop. Install it on your business and open it from the sidebar.</p>
+        <p style={{ marginTop: 24 }}>Loopness runs inside Whop. Install it on your business and open it from the sidebar.</p>
       )}
     </main>
   );
@@ -58,7 +58,7 @@ const ROLES = [
 function PublicDemoHome() {
   return (
     <main className="landing">
-      <p className="eyebrow">ReviewLoop for Whop communities</p>
+      <p className="eyebrow">Loopness for Whop communities</p>
       <h1>Review member videos without the DM pile-up.</h1>
       <p className="lede">
         Members send a form check, an edit or a practice take. Your coaches pin feedback to the exact second, score it, and clear the
@@ -88,12 +88,12 @@ function PublicDemoHome() {
       <section className="surface pad" style={{ marginTop: 36 }}>
         <h2>Want this in your community?</h2>
         <p className="small muted" style={{ marginTop: 6 }}>
-          ReviewLoop installs into your Whop as an app, so members use it without a new login. Questions? Reply to the DM that brought
+          Loopness installs into your Whop as an app, so members use it without a new login. Questions? Reply to the DM that brought
           you here.
         </p>
         {config.demoCtaUrl && (
           <a className="btn btn-primary btn-lg" style={{ marginTop: 14 }} href={config.demoCtaUrl} target="_blank" rel="noreferrer">
-            Get ReviewLoop on Whop
+            Get Loopness on Whop
             <ArrowRight size={16} weight="bold" aria-hidden="true" />
           </a>
         )}

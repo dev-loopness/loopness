@@ -27,7 +27,7 @@ export async function DemoBar() {
       <a href={DEMO_USERS[user]?.role === "coach" ? `/dashboard/${DEMO_BUSINESS.id}` : "/api/demo?user=user_demo_coach&to=dashboard"}>Owner Dashboard</a>
       {isPublicDemo && config.demoCtaUrl && (
         <a className="cta" href={config.demoCtaUrl} target="_blank" rel="noreferrer">
-          Get ReviewLoop
+          Get Loopness
         </a>
       )}
     </div>

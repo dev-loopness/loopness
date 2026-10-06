@@ -57,7 +57,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ comp
     <main>
       <header className="page-head">
         <div>
-          <h1>ReviewLoop</h1>
+          <h1>Loopness</h1>
           <p className="sub">{business.name}</p>
         </div>
         <span className="pill accent">{features.label} plan</span>

@@ -28,7 +28,7 @@ export interface Business {
   id: string;
   name: string;
   plan: PlanName;
-  /** Whop user who pays for the plan, checked against the ReviewLoop business's memberships. */
+  /** Whop user who pays for the plan, checked against the Loopness business's memberships. */
   billingUserId: string | null;
   planCheckedAt: string | null;
   settings: BusinessSettings;

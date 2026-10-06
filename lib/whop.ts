@@ -39,7 +39,7 @@ export function whopApp(): WhopClient {
 }
 
 let bizClient: WhopClient | null = null;
-/** Client for Raihan's own ReviewLoop business, used to check who bought Pro or Team. */
+/** Client for Raihan's own Loopness business, used to check who bought Pro or Team. */
 export function whopReviewLoopBusiness(): WhopClient {
   bizClient ??= new WhopClient({
     token: config.reviewloopBusinessApiKey || config.apiKey,

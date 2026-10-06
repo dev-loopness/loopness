@@ -19,7 +19,7 @@ export const config = {
   appUrl: env("APP_URL"),
   // Public demo for prospects (a separate deployment with no Whop keys). See CONNECT.md section 6.
   publicDemo: env("PUBLIC_DEMO") === "1",
-  /** Where the public demo's "Get ReviewLoop" buttons go: your Whop product page. */
+  /** Where the public demo's "Get Loopness" buttons go: your Whop product page. */
   demoCtaUrl: env("PUBLIC_DEMO_CTA_URL"),
   /** Optional YouTube or TikTok links used as the sample videos in the public demo. */
   demoVideos: env("PUBLIC_DEMO_VIDEOS").split(/[\s,]+/).filter(Boolean).slice(0, 3),
