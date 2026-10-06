@@ -2,6 +2,7 @@ import { CoachView } from "@/components/CoachView";
 import { MemberView } from "@/components/MemberView";
 import { NotInWhop } from "@/components/NotInWhop";
 import { PLANS } from "@/lib/config";
+import { uploadTarget } from "@/lib/media";
 import { resolvePlan } from "@/lib/plan";
 import { coachBlocker, estimateWaitHours, monthSubmissions, queueFor, submissionBlocker } from "@/lib/reviews";
 import { ensureBusiness, ensureMember, read } from "@/lib/store";
@@ -89,6 +90,7 @@ export default async function ExperiencePage({
         blocker={submissionBlocker(subs, business, plan, viewer.userId)}
         mission={mission}
         liveEnabled={features.liveMode}
+        uploadsEnabled={uploadTarget() !== null}
       />
     </main>
   );

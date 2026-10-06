@@ -2,6 +2,7 @@ import { createReadStream, promises as fs } from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { experienceCtx, fail, handler } from "@/lib/api";
+import { signedVideoUrl } from "@/lib/media";
 import { read, UPLOAD_DIR } from "@/lib/store";
 
 type Params = { params: Promise<{ file: string }> };
@@ -18,6 +19,11 @@ export const GET = handler(async (req: Request, { params }: Params) => {
   const { viewer, business } = await experienceCtx(new URL(req.url).searchParams.get("e") ?? sub.experienceId);
   if (business.id !== sub.businessId) fail(403, "No access.");
   if (viewer.role !== "coach" && viewer.userId !== sub.memberId) fail(403, "No access.");
+
+  // R2 videos stream straight from Cloudflare through a short-lived signed link.
+  if (sub.storage === "r2") {
+    return new Response(null, { status: 302, headers: { Location: await signedVideoUrl(file), "Cache-Control": "private, no-store" } });
+  }
 
   const full = path.join(UPLOAD_DIR, file);
   const { size } = await fs.stat(full).catch(() => fail(404, "Not found."));

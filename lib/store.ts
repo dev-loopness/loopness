@@ -54,6 +54,8 @@ export interface Submission {
   kind: SubmissionKind;
   url: string;
   durationSec: number | null;
+  /** Where an uploaded file is stored. Missing on older submissions, which were all local. */
+  storage?: "r2" | "local";
   forLiveSession: boolean;
   status: SubmissionStatus;
   scores: Record<string, number>;
