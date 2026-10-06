@@ -1,6 +1,6 @@
 import { NotInWhop } from "@/components/NotInWhop";
 import { SettingsForm } from "@/components/SettingsForm";
-import { checkoutUrl, isDemoMode, PLANS } from "@/lib/config";
+import { checkoutUrl, config, isDemoMode, isPublicDemo, PLANS } from "@/lib/config";
 import { resolvePlan } from "@/lib/plan";
 import { activeCoaches, averageReviewHours, monthSubmissions, queueFor, startOfMonth } from "@/lib/reviews";
 import { ensureBusiness, read } from "@/lib/store";
@@ -162,7 +162,7 @@ const fmt = new Intl.NumberFormat("en-US");
 const hrs = (h: number | null) => (h === null ? "None yet" : h < 1 ? "Under 1h" : `${h}h`);
 
 function UpgradeLink({ plan }: { plan: "pro" | "team" }) {
-  const url = checkoutUrl(plan);
+  const url = isPublicDemo ? config.demoCtaUrl || null : checkoutUrl(plan);
   const label = `Upgrade to ${PLANS[plan].label}`;
   if (!url)
     return (

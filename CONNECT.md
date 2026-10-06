@@ -89,6 +89,27 @@ The app has to run on a server Whop can reach. Railway costs about $5/month plus
 7. Railway redeploys by itself after each change. When the deploy shows green, install the app on a test business on Whop
    and open it from the sidebar: admins see the review queue, members see "Get feedback on a video".
 
+## 6. Public demo for DMs (a second Railway service)
+
+A click-through demo you can paste into DMs instead of offering a call. It runs the same code with no Whop keys, so
+nothing in it touches real customers.
+
+1. In the same Railway project: **New → GitHub Repo → dev-loopness/loopness** again. This makes a second service.
+2. In its **Variables**, add only these (no Whop, R2 or `DATA_DIR` values, and no volume):
+
+| Variable | Value |
+|---|---|
+| `PUBLIC_DEMO` | `1` |
+| `PUBLIC_DEMO_CTA_URL` | Your ReviewLoop product page on Whop (where owners buy) |
+| `PUBLIC_DEMO_VIDEOS` | Optional. Up to 3 YouTube links of your demo recordings, separated by commas |
+
+3. **Settings → Networking → Generate Domain.** That address is the link you send in DMs.
+
+Each visitor gets their own sample community with videos, timestamped notes and scores, so prospects never see each
+other's clicks. Uploads are switched off (visitors can paste YouTube or TikTok links). A visitor's sample community is
+deleted after a day without visits, and at most 500 are kept. Records reset when the service redeploys, which is fine
+for a demo.
+
 ## Checklist
 
 - [ ] `WHOP_APP_ID`
@@ -102,3 +123,4 @@ The app has to run on a server Whop can reach. Railway costs about $5/month plus
 - [ ] `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`
 - [ ] `APP_URL` and `DATA_DIR` (when hosted)
 - [ ] Base URL, Experience path, Dashboard path typed into Whop
+- [ ] Public demo service: `PUBLIC_DEMO=1`, `PUBLIC_DEMO_CTA_URL` (optional `PUBLIC_DEMO_VIDEOS`)

@@ -37,6 +37,7 @@ export function MemberView({
   mission,
   liveEnabled,
   uploadsEnabled,
+  uploadsOffNote,
 }: {
   experienceId: string;
   mine: Submission[];
@@ -48,6 +49,8 @@ export function MemberView({
   mission: { daysLeft: number } | null;
   liveEnabled: boolean;
   uploadsEnabled: boolean;
+  /** Shown above the link field when uploads are off. */
+  uploadsOffNote?: string | null;
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<"upload" | "link">(uploadsEnabled ? "upload" : "link");
@@ -191,7 +194,7 @@ export function MemberView({
                   aria-pressed={mode === "upload"}
                   onClick={() => setMode("upload")}
                   disabled={!uploadsEnabled}
-                  title={uploadsEnabled ? undefined : "File uploads are coming soon. Paste a link for now."}
+                  title={uploadsEnabled ? undefined : (uploadsOffNote ?? "File uploads are coming soon. Paste a link for now.")}
                 >
                   Upload File
                 </button>
@@ -235,6 +238,7 @@ export function MemberView({
                 )
               ) : (
                 <div className="field">
+                  {!uploadsEnabled && uploadsOffNote && <p className="small muted" style={{ marginBottom: 8 }}>{uploadsOffNote}</p>}
                   <label htmlFor="video-url">Video link</label>
                   <input
                     id="video-url"

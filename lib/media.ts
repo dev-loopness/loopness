@@ -7,15 +7,17 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { config, isDemoMode } from "./config";
+import { config, isDemoMode, isPublicDemo } from "./config";
 import { UPLOAD_DIR } from "./store";
 
 export type StorageKind = "r2" | "local";
 
 const r2Ready = () => Boolean(config.r2.accountId && config.r2.accessKeyId && config.r2.secretAccessKey && config.r2.bucket);
 
-/** Where new uploads go, or null when the live app has no video storage set up yet. */
+/** Where new uploads go, or null when uploads are off (no video storage set up yet, or the public demo). */
 export function uploadTarget(): StorageKind | null {
+  // The public demo is open to anyone, so it never stores files.
+  if (isPublicDemo) return null;
   if (r2Ready()) return "r2";
   return isDemoMode ? "local" : null;
 }
