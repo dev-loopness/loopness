@@ -1,15 +1,32 @@
 // Which ReviewLoop plan does a business have?
 // Plans are sold as Raihan's own Whop product. A business is on Pro or Team when one of its
-// admins holds an active membership on the matching plan in the ReviewLoop business.
+// admins holds an active membership on the matching plan in the ReviewLoop business, or bought
+// the matching setup package (Launch Pack = Pro, Scale Pack = Team) within the last 12 months.
 
 import "server-only";
 import { cookies } from "next/headers";
-import { config, isDemoMode, type PlanName } from "./config";
+import { config, isDemoMode, PACKAGE_TERM_DAYS, type PlanName } from "./config";
 import { read, write, type Business } from "./store";
 import { whopReviewLoopBusiness } from "./whop";
 
 const RECHECK_MS = 15 * 60_000;
 const PAYING = new Set(["active", "trialing", "canceling", "past_due"]);
+// A one-payment purchase can show as "completed" once paid, so packages also count that status.
+const PACKAGE_PAID = new Set([...PAYING, "completed"]);
+const PACKAGE_TERM_MS = PACKAGE_TERM_DAYS * 24 * 60 * 60_000;
+
+function tierFor(m: { plan_id: string; status: string; created_at: string }): PlanName {
+  if (PAYING.has(m.status)) {
+    if (config.planIds.team.includes(m.plan_id)) return "team";
+    if (config.planIds.pro.includes(m.plan_id)) return "pro";
+  }
+  const withinTerm = Date.now() - Date.parse(m.created_at) < PACKAGE_TERM_MS;
+  if (PACKAGE_PAID.has(m.status) && withinTerm) {
+    if (config.packagePlanIds.team.includes(m.plan_id)) return "team";
+    if (config.packagePlanIds.pro.includes(m.plan_id)) return "pro";
+  }
+  return "free";
+}
 
 async function planForUser(userId: string): Promise<PlanName> {
   if (!config.reviewloopBusinessId) return "free";
@@ -20,9 +37,9 @@ async function planForUser(userId: string): Promise<PlanName> {
       user_id: userId,
     });
     for await (const m of page) {
-      if (!PAYING.has(m.status)) continue;
-      if (config.planIds.team.includes(m.plan_id)) return "team";
-      if (config.planIds.pro.includes(m.plan_id)) best = "pro";
+      const tier = tierFor(m);
+      if (tier === "team") return "team";
+      if (tier === "pro") best = "pro";
     }
   } catch (err) {
     console.error("[plan] could not check memberships", err);
