@@ -7,7 +7,8 @@ import "server-only";
 import { cookies, headers } from "next/headers";
 import { WhopClient } from "@whop/sdk";
 import { verifyUserToken } from "@whop/api";
-import { config, isDemoMode } from "./config";
+import { config, isDemoMode, isPublicDemo } from "./config";
+import { currentSandbox, ensureSandbox, sandboxBusinessId, SANDBOX_NAME } from "./sandbox";
 
 export type Role = "coach" | "member";
 
@@ -38,7 +39,7 @@ export function whopApp(): WhopClient {
 }
 
 let bizClient: WhopClient | null = null;
-/** Client for Raihan's own ReviewLoop business, used to check who bought Pro or Team. */
+/** Client for Raihan's own Loopness business, used to check who bought Pro or Team. */
 export function whopReviewLoopBusiness(): WhopClient {
   bizClient ??= new WhopClient({
     token: config.reviewloopBusinessApiKey || config.apiKey,
@@ -61,6 +62,12 @@ async function demoViewer(experienceId: string | null): Promise<Viewer> {
   const jar = await cookies();
   const id = jar.get("rl_demo_user")?.value;
   const userId = id && DEMO_USERS[id] ? id : "user_demo_coach";
+  if (isPublicDemo) {
+    // Every visitor gets their own sample community, whatever ids are in the URL.
+    const sid = await currentSandbox();
+    await ensureSandbox(sid, experienceId ?? DEMO_EXPERIENCE_ID);
+    return { userId, ...DEMO_USERS[userId], businessId: sandboxBusinessId(sid), businessName: SANDBOX_NAME, experienceId };
+  }
   return {
     userId,
     ...DEMO_USERS[userId],

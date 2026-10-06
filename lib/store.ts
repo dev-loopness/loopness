@@ -28,10 +28,12 @@ export interface Business {
   id: string;
   name: string;
   plan: PlanName;
-  /** Whop user who pays for the plan, checked against the ReviewLoop business's memberships. */
+  /** Whop user who pays for the plan, checked against the Loopness business's memberships. */
   billingUserId: string | null;
   planCheckedAt: string | null;
   settings: BusinessSettings;
+  /** Public demo sandboxes only: last visit, so idle sandboxes can be cleared. */
+  demoLastSeenAt?: string;
   createdAt: string;
 }
 
@@ -78,7 +80,7 @@ export interface Comment {
   createdAt: string;
 }
 
-interface DB {
+export interface DB {
   businesses: Record<string, Business>;
   members: Record<string, Member>;
   submissions: Record<string, Submission>;

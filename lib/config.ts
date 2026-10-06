@@ -17,6 +17,12 @@ export const config = {
     team: [env("WHOP_SCALE_PACK_PLAN_ID")].filter(Boolean),
   },
   appUrl: env("APP_URL"),
+  // Public demo for prospects (a separate deployment with no Whop keys). See CONNECT.md section 6.
+  publicDemo: env("PUBLIC_DEMO") === "1",
+  /** Where the public demo's "Get Loopness" buttons go: your Whop product page. */
+  demoCtaUrl: env("PUBLIC_DEMO_CTA_URL"),
+  /** Optional YouTube or TikTok links used as the sample videos in the public demo. */
+  demoVideos: env("PUBLIC_DEMO_VIDEOS").split(/[\s,]+/).filter(Boolean).slice(0, 3),
   r2: {
     accountId: env("R2_ACCOUNT_ID"),
     accessKeyId: env("R2_ACCESS_KEY_ID"),
@@ -27,6 +33,9 @@ export const config = {
 
 /** Demo mode runs without Whop: fake users, every feature viewable. On whenever the Whop keys are blank. */
 export const isDemoMode = !config.apiKey || !config.appId;
+
+/** Public demo: demo mode open to anyone, with a private sample community per visitor and no uploads. */
+export const isPublicDemo = isDemoMode && config.publicDemo;
 
 export type PlanName = "free" | "pro" | "team";
 

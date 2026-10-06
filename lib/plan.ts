@@ -1,6 +1,6 @@
-// Which ReviewLoop plan does a business have?
+// Which Loopness plan does a business have?
 // Plans are sold as Raihan's own Whop product. A business is on Pro or Team when one of its
-// admins holds an active membership on the matching plan in the ReviewLoop business, or bought
+// admins holds an active membership on the matching plan in the Loopness business, or bought
 // the matching setup package (Launch Pack = Pro, Scale Pack = Team) within the last 12 months.
 
 import "server-only";

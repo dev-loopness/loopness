@@ -1,7 +1,7 @@
 import { CoachView } from "@/components/CoachView";
 import { MemberView } from "@/components/MemberView";
 import { NotInWhop } from "@/components/NotInWhop";
-import { PLANS } from "@/lib/config";
+import { isPublicDemo, PLANS } from "@/lib/config";
 import { uploadTarget } from "@/lib/media";
 import { resolvePlan } from "@/lib/plan";
 import { coachBlocker, estimateWaitHours, monthSubmissions, queueFor, submissionBlocker } from "@/lib/reviews";
@@ -91,6 +91,7 @@ export default async function ExperiencePage({
         mission={mission}
         liveEnabled={features.liveMode}
         uploadsEnabled={uploadTarget() !== null}
+        uploadsOffNote={isPublicDemo ? "File uploads are off in this demo. Paste any YouTube or TikTok link to try it. In your community, members upload straight from their phone." : null}
       />
     </main>
   );

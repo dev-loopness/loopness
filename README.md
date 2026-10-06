@@ -1,4 +1,4 @@
-# ReviewLoop
+# Loopness
 
 A Whop app for coaching communities: members send a video (upload up to 3 minutes, or a
 YouTube/TikTok link) and coaches reply with timestamped feedback.

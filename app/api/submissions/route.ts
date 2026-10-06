@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { experienceCtx, fail, handler } from "@/lib/api";
-import { MAX_UPLOAD_BYTES, MAX_VIDEO_SECONDS } from "@/lib/config";
+import { isPublicDemo, MAX_UPLOAD_BYTES, MAX_VIDEO_SECONDS } from "@/lib/config";
 import { detectKind, submissionBlocker } from "@/lib/reviews";
 import { saveVideo, uploadTarget } from "@/lib/media";
+import { sandboxFull } from "@/lib/sandbox";
 import { newId, read, write, type Submission } from "@/lib/store";
 
 const VIDEO_TYPES: Record<string, string> = {
@@ -12,7 +13,11 @@ const VIDEO_TYPES: Record<string, string> = {
   "video/x-m4v": "m4v",
 };
 
+const DEMO_UPLOADS_OFF = "File uploads are off in this demo. Paste a YouTube or TikTok link instead.";
+
 export const POST = handler(async (req: Request) => {
+  // The public demo takes links only, so refuse big bodies before reading them.
+  if (isPublicDemo && Number(req.headers.get("content-length") ?? 0) > 64_000) fail(413, DEMO_UPLOADS_OFF);
   const form = await req.formData();
   const experienceId = String(form.get("experienceId") ?? "");
   const { viewer, business, plan } = await experienceCtx(experienceId);
@@ -20,6 +25,8 @@ export const POST = handler(async (req: Request) => {
   const subs = await read((db) => Object.values(db.submissions));
   const blocker = submissionBlocker(subs, business, plan, viewer.userId);
   if (blocker) fail(409, blocker);
+  const full = await sandboxFull(business.id, "submission");
+  if (full) fail(429, full);
 
   const title = String(form.get("title") ?? "").trim().slice(0, 120);
   const note = String(form.get("note") ?? "").trim().slice(0, 2000);
@@ -40,7 +47,7 @@ export const POST = handler(async (req: Request) => {
     if (file.size > MAX_UPLOAD_BYTES) fail(400, "That file is too big. Keep videos under 250 MB.");
     if (durationSec && durationSec > MAX_VIDEO_SECONDS + 1) fail(400, "Videos can be up to 3 minutes long.");
     const target = uploadTarget();
-    if (!target) fail(503, "Video uploads aren't switched on yet. Paste a YouTube or TikTok link for now.");
+    if (!target) fail(503, isPublicDemo ? DEMO_UPLOADS_OFF : "Video uploads aren't switched on yet. Paste a YouTube or TikTok link for now.");
     const name = `${id}.${ext}`;
     await saveVideo(target, name, Buffer.from(await file.arrayBuffer()), file.type);
     storage = target;

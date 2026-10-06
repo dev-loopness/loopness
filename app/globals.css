@@ -1,4 +1,4 @@
-/* ReviewLoop design tokens.
+/* Loopness design tokens.
    Operate-mode product UI that lives inside Whop: one sans family (Geist), cool zinc neutrals,
    one burnt-orange accent reserved for primary actions, selection and the video timeline.
    Radius rule: controls 8px, surfaces 12px, status pills fully round. Nothing else. */
@@ -303,6 +303,8 @@ input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px;
 .demobar label { color: var(--stage-muted); font-weight: 400; font-size: 12px; display: inline-flex; gap: 6px; align-items: center; }
 .demobar select { width: auto; height: 26px; padding: 0 6px; font-size: 12px; background: var(--stage-2); color: var(--stage-text); border-color: #34343b; }
 .demobar a { color: var(--stage-text); }
+.demobar a.cta { background: var(--accent); color: #fff; text-decoration: none; font-weight: 500; padding: 4px 10px; border-radius: 6px; }
+.demobar a.cta:hover { filter: brightness(1.08); }
 
 /* Entrance for newly added comments (one authored motion moment) */
 @media (prefers-reduced-motion: no-preference) {
@@ -312,3 +314,16 @@ input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px;
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0ms !important; }
 }
+
+/* Public demo landing page */
+.landing { max-width: 880px; padding-top: 56px; }
+.landing .eyebrow { font-size: 13px; color: var(--accent); font-weight: 500; }
+.landing h1 { font-size: clamp(28px, 4.2vw, 40px); line-height: 1.12; letter-spacing: -0.02em; margin-top: 10px; text-wrap: balance; max-width: 22ch; }
+.landing .lede { font-size: 16px; color: var(--muted); margin-top: 14px; max-width: 60ch; text-wrap: pretty; }
+.roles { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.role { display: flex; flex-direction: column; gap: 8px; padding: 18px; height: 100%; color: inherit; text-decoration: none; transition: border-color 150ms var(--ease-out), transform 150ms var(--ease-out); }
+.role svg { color: var(--accent); }
+.role strong { display: inline-flex; gap: 6px; align-items: center; font-weight: 600; }
+.role:hover { border-color: var(--accent); }
+.role:active { transform: scale(0.99); }
+.role:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
